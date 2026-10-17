@@ -1,0 +1,37 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+model Package {
+    id Int @id @default(autoincrement())
+    name String @unique
+    months Int
+    price Int
+    isActive Boolean @default(true)
+    member Member[]
+}
+
+model Member {
+    id Int @id @default(autoincrement())
+    fullname String
+    phone String @unique
+    gender Gender?
+    birthDay DateTime? @db.Date
+    email String?
+    packageId Int
+    package Package @relation(fields: [packageId], references: [id])
+    startDate  DateTime @db.Date
+    expiryDate DateTime @db.Date
+    createdAt  DateTime @default(now())
+}
