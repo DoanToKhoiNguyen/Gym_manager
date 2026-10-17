@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { normalizeText } from "../apps/api/src/utils/text.utils";
 
 const prisma = new PrismaClient();
 
@@ -18,6 +19,18 @@ async function main(){
     });
   }
   console.log("Đã nạp 4 gói tập mẫu");
+
+// Điền searchName cho hội viên đã có từ trước khi thêm cột này
+  const members = await prisma.member.findMany({
+    select: { id: true, fullName: true },
+  });
+  for (const m of members) {
+    await prisma.member.update({
+      where: { id: m.id },
+      data: { searchName: normalizeText(m.fullName) },
+    });
+  }
+  console.log(`Đã cập nhật searchName cho ${members.length} hội viên`);
 }
 main().catch((error) => {
     console.error(error);

@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { calculateExpiryDate, getMemberStatus } from "../services/date.utils";
+import {
+  calculateExpiryDate,
+  getMemberStatus,
+  parseDateOnly,
+  formatDateOnly,
+  toDbDate,
+  fromDbDate,
+} from "../services/date.utils";
 
 // Tạo ngày theo giờ địa phương (tháng tính từ 1 cho dễ đọc)
 const d = (year: number, month: number, day: number) =>
@@ -54,5 +61,23 @@ describe("getMemberStatus", () => {
 
   it("hết hạn đã lâu -> EXPIRED", () => {
     expect(getMemberStatus(d(2025, 1, 1), today)).toBe("EXPIRED");
+  });
+});
+describe("xử lý ngày thuần", () => {
+  it("parseDateOnly và formatDateOnly đối xứng", () => {
+    expect(formatDateOnly(parseDateOnly("2026-10-17"))).toBe("2026-10-17");
+  });
+
+  it("phát hiện ngày không tồn tại (30/02)", () => {
+    expect(formatDateOnly(parseDateOnly("2026-02-30"))).not.toBe("2026-02-30");
+  });
+
+  it("toDbDate rồi fromDbDate trả lại đúng ngày cũ", () => {
+    const original = new Date(2026, 9, 17);
+    expect(fromDbDate(toDbDate(original))).toEqual(original);
+  });
+
+  it("toDbDate lưu đúng ngày theo UTC", () => {
+    expect(toDbDate(new Date(2026, 9, 17)).toISOString()).toBe("2026-10-17T00:00:00.000Z");
   });
 });
