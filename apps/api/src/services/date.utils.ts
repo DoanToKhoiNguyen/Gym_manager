@@ -1,4 +1,4 @@
-import { addMonths, differenceInCalendarDays } from "date-fns";
+import { addDays, differenceInCalendarDays } from "date-fns";
 
 //các trạng thái
 export type MemberStatus = "ACTIVE" | "EXPIRING" | "EXPIRED";
@@ -7,11 +7,11 @@ const pad = (n: number) => String(n).padStart(2, "0");
 export const EXPIRING_DAYS = 7;
 
 // Tính ngày hết hạn
-export function calculateExpiryDate(startDate: Date, months: number): Date{
-    if(months <= 0 || !Number.isInteger(months)){
-        throw new Error("Số tháng phải lớn hơn 0");
-    }
-    return addMonths(startDate, months);
+export function calculateExpiryDate(startDate: Date, days: number): Date {
+  if (!Number.isInteger(days) || days <= 0) {
+    throw new Error("Số ngày phải là số nguyên lớn hơn 0");
+  }
+  return addDays(startDate, days - 1);
 }
 
 //kiểm tra trạng thái

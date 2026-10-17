@@ -4,10 +4,10 @@ import { normalizeText } from "../apps/api/src/utils/text.utils";
 const prisma = new PrismaClient();
 
 const packages = [
-    {name: "1 tháng", months: 1, price: 350},
-    {name: "3 tháng", months: 3, price: 950},
-    {name: "6 tháng", months: 6, price: 1900},
-    {name: "12 tháng", months: 12, price: 3500},
+    {name: "1 tháng", months: 30, price: 350},
+    {name: "3 tháng", months: 90, price: 950},
+    {name: "6 tháng", months: 180, price: 1900},
+    {name: "12 tháng", months: 365, price: 3500},
 ];
 
 async function main(){

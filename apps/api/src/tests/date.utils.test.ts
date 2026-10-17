@@ -12,28 +12,36 @@ import {
 const d = (year: number, month: number, day: number) =>
   new Date(year, month - 1, day);
 
-describe("calculateExpiryDate", () => {
-  it("15/01 + 1 tháng = 15/02", () => {
-    expect(calculateExpiryDate(d(2026, 1, 15), 1)).toEqual(d(2026, 2, 15));
+describe("calculateExpiryDate (ngày hết hạn = ngày tập cuối)", () => {
+  it("30 ngày từ 17/10/2026 -> 15/11/2026", () => {
+    expect(calculateExpiryDate(d(2026, 10, 17), 30)).toEqual(d(2026, 11, 15));
   });
 
-  it("31/01 + 1 tháng = 28/02 (năm thường)", () => {
-    expect(calculateExpiryDate(d(2027, 1, 31), 1)).toEqual(d(2027, 2, 28));
+  it("1 ngày -> hết hạn ngay trong ngày bắt đầu", () => {
+    expect(calculateExpiryDate(d(2026, 10, 17), 1)).toEqual(d(2026, 10, 17));
   });
 
-  it("31/01 + 1 tháng = 29/02 (năm nhuận)", () => {
-    expect(calculateExpiryDate(d(2028, 1, 31), 1)).toEqual(d(2028, 2, 29));
+  it("90 ngày từ 17/10/2026 -> 14/01/2027", () => {
+    expect(calculateExpiryDate(d(2026, 10, 17), 90)).toEqual(d(2027, 1, 14));
   });
 
-  it("qua năm mới: 15/11/2026 + 3 tháng = 15/02/2027", () => {
-    expect(calculateExpiryDate(d(2026, 11, 15), 3)).toEqual(d(2027, 2, 15));
+  it("qua năm mới: 20/12/2026 + 30 ngày -> 18/01/2027", () => {
+    expect(calculateExpiryDate(d(2026, 12, 20), 30)).toEqual(d(2027, 1, 18));
   });
 
-  it("12 tháng: 17/10/2026 -> 17/10/2027", () => {
-    expect(calculateExpiryDate(d(2026, 10, 17), 12)).toEqual(d(2027, 10, 17));
+  it("tháng 2 năm thường: 01/02/2027 + 30 ngày -> 02/03/2027", () => {
+    expect(calculateExpiryDate(d(2027, 2, 1), 30)).toEqual(d(2027, 3, 2));
   });
 
-  it("báo lỗi khi số tháng không hợp lệ", () => {
+  it("tháng 2 năm nhuận: 01/02/2028 + 30 ngày -> 01/03/2028", () => {
+    expect(calculateExpiryDate(d(2028, 2, 1), 30)).toEqual(d(2028, 3, 1));
+  });
+
+  it("365 ngày từ 17/10/2026 -> 16/10/2027", () => {
+    expect(calculateExpiryDate(d(2026, 10, 17), 365)).toEqual(d(2027, 10, 16));
+  });
+
+  it("báo lỗi khi số ngày không hợp lệ", () => {
     expect(() => calculateExpiryDate(d(2026, 1, 1), 0)).toThrow();
     expect(() => calculateExpiryDate(d(2026, 1, 1), -3)).toThrow();
     expect(() => calculateExpiryDate(d(2026, 1, 1), 1.5)).toThrow();
@@ -51,7 +59,7 @@ describe("getMemberStatus", () => {
     expect(getMemberStatus(d(2026, 10, 24), today)).toBe("EXPIRING");
   });
 
-  it("hết hạn đúng hôm nay -> EXPIRING (vẫn còn hiệu lực)", () => {
+  it("hết hạn đúng hôm nay -> EXPIRING (hôm nay vẫn được tập)", () => {
     expect(getMemberStatus(d(2026, 10, 17), today)).toBe("EXPIRING");
   });
 
@@ -63,6 +71,19 @@ describe("getMemberStatus", () => {
     expect(getMemberStatus(d(2025, 1, 1), today)).toBe("EXPIRED");
   });
 });
+
+describe("gói 30 ngày bắt đầu 17/10/2026", () => {
+  const expiry = calculateExpiryDate(d(2026, 10, 17), 30); // 15/11/2026
+
+  it("ngày thứ 30 (15/11) vẫn được tập", () => {
+    expect(getMemberStatus(expiry, d(2026, 11, 15))).toBe("EXPIRING");
+  });
+
+  it("ngày thứ 31 (16/11) báo hết hạn", () => {
+    expect(getMemberStatus(expiry, d(2026, 11, 16))).toBe("EXPIRED");
+  });
+});
+
 describe("xử lý ngày thuần", () => {
   it("parseDateOnly và formatDateOnly đối xứng", () => {
     expect(formatDateOnly(parseDateOnly("2026-10-17"))).toBe("2026-10-17");
