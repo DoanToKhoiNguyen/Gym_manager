@@ -1,6 +1,15 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useCurrentUser, useLogout } from "../hooks/useAuth";
 
 export default function Layout() {
+  const { data } = useCurrentUser();
+  const logout = useLogout();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout.mutate(undefined, { onSuccess: () => navigate("/login") });
+  }
+
   return (
     <div className="layout">
       <aside className="sidebar">
@@ -13,6 +22,12 @@ export default function Layout() {
             Gói tập
           </NavLink>
         </nav>
+        <div className="sidebar-footer">
+          {data?.user && <div className="sidebar-user">{data.user.fullName ?? data.user.username}</div>}
+          <button className="btn btn-secondary btn-small" onClick={handleLogout} style={{ width: "100%" }}>
+            Đăng xuất
+          </button>
+        </div>
       </aside>
       <main className="content">
         <Outlet />

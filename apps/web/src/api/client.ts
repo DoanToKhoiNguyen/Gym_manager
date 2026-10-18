@@ -16,6 +16,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   try {
     res = await fetch(`/api${path}`, {
       ...options,
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
     });
   } catch {

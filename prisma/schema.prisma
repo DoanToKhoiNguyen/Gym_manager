@@ -37,3 +37,11 @@ model Member {
   createdAt  DateTime  @default(now())
   searchName String    @default("")
 }
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  passwordHash String
+  fullName     String?
+  createdAt    DateTime @default(now())
+}

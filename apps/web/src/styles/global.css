@@ -303,3 +303,37 @@ tr:last-child td {
   opacity: 0;
   pointer-events: none;
 }
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav {
+  flex: 1;
+}
+
+.sidebar-footer {
+  border-top: 1px solid #1f2937;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.sidebar-user {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+  padding: 0 12px;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+}
